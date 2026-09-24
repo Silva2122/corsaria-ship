@@ -70,6 +70,12 @@
 
   /* entrance: each plane arrives from its own distance */
   .l-sky  .in{animation:skyIn 2.6s cubic-bezier(.19,1,.22,1) both}
+  /* the clouds keep drifting on their own, slowly coming closer and sliding with the wind */
+  .l-sky  img{animation:skyDrift 46s ease-in-out infinite alternate; transform-origin:62% 55%}
+  @keyframes skyDrift{
+    from{transform:scale(1.03) translate(0, 0)}
+    to{transform:scale(1.1) translate(-2.2%, .9%)}
+  }
   .l-sea  .in{animation:rise 2s cubic-bezier(.19,1,.22,1) .25s both}
   .l-ship .in{animation:sail 2.8s cubic-bezier(.19,1,.22,1) .45s both}
   .l-surf .in{animation:surge 2.2s cubic-bezier(.19,1,.22,1) .35s both}
@@ -319,11 +325,11 @@
 
 <main class="hero" id="hero">
   <div class="scene" id="scene" aria-hidden="true">
-    <div class="layer l-sky"  data-depth=".12"><div class="in"><img src="img/sky.webp"  alt=""></div></div>
+    <div class="layer l-sky"  data-depth=".22"><div class="in"><img src="img/sky.webp"  alt=""></div></div>
   </div>
 
   <!-- the headline sits between the sky and the sea, so masts cut through it -->
-  <h1 class="title layer" data-depth=".25" id="title">
+  <h1 class="title layer" data-depth=".32" id="title">
     <span class="in" style="display:block">
       <span class="word" id="word">Salt <em>&amp;</em> Gold</span>
     </span>
@@ -462,7 +468,9 @@
       // near planes move against the cursor, far ones barely move
       const x = -nx * ax * d, y = -ny * ay * d;
       const rot = el.classList.contains('l-ship') ? nx * 0.8 : 0;
-      el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) rotate(${rot.toFixed(3)}deg)`;
+      // the sky also swells a touch as you look up into it, like a dome over the scene
+      const sc = el.classList.contains('l-sky') ? 1 + (-ny + 1) * 0.012 : 1;
+      el.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) rotate(${rot.toFixed(3)}deg) scale(${sc.toFixed(4)})`;
     }
     requestAnimationFrame(loop);
   };
